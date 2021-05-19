@@ -1,0 +1,495 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+
+    <style type="text/css">
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-size: 0;
+        }
+
+        div {
+            display: none;
+        }
+
+        #myCan {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <style>
+        #roses {
+            position: absolute;
+            left: 50px;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            width: 900px;
+            height: 1200px;
+            animation: myrose 19s linear 1;
+        }
+
+        @keyframes myrose {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(0.5);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <!-- 时间 -->
+        <ul data-time="200">
+            <li data-saturation="0" data-lightness="100">3</li>
+        </ul>
+        <ul data-time="200">
+            <li data-saturation="0" data-lightness="100">2</li>
+        </ul>
+        <ul data-time="350">
+            <li data-saturation="0" data-lightness="100">1</li>
+        </ul>
+        <ul data-time="10000">
+            <!-- 颜色 -->
+            <li data-hue="197">5</li>
+            <li data-hue="197">2</li>
+            <li data-hue="197">0</li>
+            <li data-hue="197">快</li>
+            <li data-hue="197">乐</li>
+            <li data-hue="45">.</li>
+            <!-- 0为红色 -->
+            <li data-hue="0">❤</li>
+        </ul>
+    </div>
+    <canvas id="roses"></canvas>
+    <canvas id="myCan"></canvas>
+    <audio id="bgMusic"
+		src="https://aqqmusic.tc.qq.com/amobile.music.tc.qq.com/C4000035dBqS0PHMiL.m4a?guid=703417739&vkey=C604CA2747A13204B2AF6D996751A53506984E74FD8E36434FD9773113AC2BB456D5A5CC6D1CE8BCB79B71679DBA1198F5A73BE4E7F80739&uin=&fromtag=66"
+        autoplay="autoplay" loop></audio>
+    <script>
+        var html = document.getElementsByTagName('html')[0]
+		var bgMusic = document.getElementById('bgMusic')
+		html.addEventListener('touchstart', function () {
+			bgMusic.play()
+		})
+		function toggleSound() {
+			if (bgMusic.paused) {
+				//判读是否播放
+				bgMusic.paused = false
+				bgMusic.play() //没有就播放
+			}
+		}
+		setInterval('toggleSound()', 1)
+    </script>
+    <script>
+        const newParticlesPerFrame = 100;
+
+        const color = (hsl, o) => {
+            return `hsla(${hsl.h | 0}, ${hsl.s}%, ${hsl.l}%, ${o})`;
+        };
+
+        class TextSparks {
+            constructor() {
+                this.opa = 0;
+                this.tick = 0;
+                this.drawCB = null;
+                this.mask = null;
+                this.canvas = window.document.querySelector("#myCan");
+                this.engine = this.canvas.getContext("2d");
+
+                this.maskTick = 0;
+                this.nextMaskCb = this.nextMask.bind(this);
+                this.maskCache = [];
+
+                this.resize();
+                this.fetchData();
+                this.buildStackCache();
+
+                this.particleMap = new Map();
+            }
+
+            buildStackCache() {
+                this.maskCache = this.stack.map((stack) => {
+                    return this.buildTextMask(stack.texts);
+                });
+            }
+
+            fetchData() {
+                this.stackId = -1;
+                this.stack = [...document.querySelectorAll("div > ul")].map((ul) => {
+                    return {
+                        ticks:
+                            0.05 *
+                            (ul.hasAttribute("data-time") ? ul.getAttribute("data-time") : 0),
+                        fadeIn: ul.hasAttribute("data-fade-in")
+                            ? 50 / Number(ul.getAttribute("data-fade-in"))
+                            : 0,
+                        fadeOut: ul.hasAttribute("data-fade-out")
+                            ? 50 / Number(ul.getAttribute("data-fade-out"))
+                            : 0,
+                        texts: [...ul.querySelectorAll("li")].map((li) => {
+                            return {
+                                text: li.innerHTML.trim(),
+                                hsl: {
+                                    h: li.hasAttribute("data-hue")
+                                        ? Number(li.getAttribute("data-hue"))
+                                        : 0,
+                                    s: li.hasAttribute("data-saturation")
+                                        ? Number(li.getAttribute("data-saturation"))
+                                        : 100,
+                                    l: li.hasAttribute("data-lightness")
+                                        ? Number(li.getAttribute("data-lightness"))
+                                        : 50,
+                                },
+                            };
+                        }),
+                    };
+                });
+            }
+
+            resize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+
+                this.canvas.setAttribute("width", this.width);
+                this.canvas.setAttribute("height", this.height);
+            }
+
+            buildTextMask(texts) {
+                const mask = [];
+
+                const textAll = texts.reduce((all, textStack) => {
+                    return all.concat(textStack.text);
+                }, "");
+
+                const size = 0.8;
+                const width = 200;
+                const height = (width / (this.width / this.height)) | 0;
+                const baseFontSize = 20;
+
+                // const canvas = document.querySelector('#test');
+                const canvas = document.createElement("canvas");
+                const engine = canvas.getContext("2d");
+
+                canvas.setAttribute("width", width);
+                canvas.setAttribute("height", height);
+
+                const font = (size) => {
+                    return `bold ${size}px Arial`;
+                };
+
+                engine.fillStyle = "#333";
+                engine.font = font(baseFontSize);
+                const m = engine.measureText(textAll);
+                const rel = m.width / (width * size);
+                const fSize = Math.min(height * 0.8, (baseFontSize / rel) | 0);
+
+                engine.font = font(fSize);
+                const fontWidth = engine.measureText(textAll).width;
+
+                engine.fillText(
+                    textAll,
+                    (width - fontWidth) / 2,
+                    height / 2 + fSize * 0.35
+                );
+
+                let left = (width - fontWidth) / 2;
+                const bot = height / 2 + fSize * 0.35;
+
+                Object.values(texts).forEach((textStack) => {
+                    engine.clearRect(0, 0, width, height);
+
+                    engine.fillText(textStack.text, left, bot);
+
+                    left += engine.measureText(textStack.text).width;
+
+                    const data = engine.getImageData(0, 0, width, height);
+                    const subStack = [];
+
+                    for (let i = 0, max = data.width * data.height; i < max; i++) {
+                        if (data.data[i * 4 + 3]) {
+                            subStack.push({
+                                x: (i % data.width) / data.width,
+                                y: ((i / data.width) | 0) / data.height,
+                                o: Math.random(),
+                                t: Math.random(),
+                            });
+                        }
+                    }
+
+                    mask.push({
+                        hsl: textStack.hsl,
+                        s: subStack,
+                    });
+                });
+
+                return mask;
+            }
+
+            createNewParticle() {
+                for (let i = 0; i < newParticlesPerFrame; i++) {
+                    let main = (Math.random() * this.mask.length) | 0;
+                    let subMask = this.mask[main];
+                    let maskElement = this.mask[main].s[
+                        (Math.random() * this.mask[main].s.length) | 0
+                    ];
+
+                    if (subMask && maskElement) {
+                        let particle = {
+                            x: maskElement.x,
+                            y: maskElement.y,
+                            hsl: subMask.hsl,
+                            c: this.prepareParticle,
+                        };
+
+                        this.particleMap.set(particle, particle);
+                    }
+                }
+            }
+
+            secLog(log, timesPerFrame) {
+                if (Math.random() < 1 / 60 / timesPerFrame) {
+                    console.log(log);
+                }
+            }
+
+            clear() {
+                this.engine.fillStyle = "#111";
+                this.engine.fillRect(0, 0, this.width, this.height);
+            }
+
+            randFromList(...rands) {
+                return (
+                    rands.reduce((acc, rand) => {
+                        return acc + rand;
+                    }, 0) / rands.length
+                );
+            }
+
+            prepareParticle(particle) {
+                const r1 = Math.random();
+                const r2 = Math.random();
+                const r3 = Math.random();
+
+                const rad = r3 * Math.PI * 2;
+
+                particle.x += (-0.5 + r1) / 300;
+                particle.y += (-0.5 + r2) / 300;
+                particle.si = (1 + Math.random() * 4) | 0;
+                // particle.cc = this.randFromList(r2, r3);
+                // particle.cc = this.hue / 365;
+
+                particle.s = 0.003 + this.randFromList(r1, r2) / 10;
+                particle.l = 0;
+
+                particle.mx = Math.cos(rad) * (particle.s / (r1 < 0.05 ? 10 : 400));
+                particle.my = Math.sin(rad) * (particle.s / (r1 < 0.05 ? 10 : 400));
+
+                particle.c = this.drawParticle;
+            }
+
+            drawParticle(particle) {
+                if (particle.l >= 1) {
+                    particle.c = null;
+                    return;
+                }
+
+                particle.l += particle.s;
+                particle.x += particle.mx;
+                particle.y += particle.my;
+
+                this.engine.fillStyle = color(
+                    particle.hsl,
+                    this.opa * Math.sin(particle.l * Math.PI)
+                );
+                this.engine.fillRect(
+                    particle.x * this.width,
+                    particle.y * this.height,
+                    particle.si,
+                    particle.si
+                );
+            }
+
+            renderParticles() {
+                this.particleMap.forEach((particle) => {
+                    particle.c.call(this, particle);
+
+                    if (!particle.c) {
+                        this.particleMap.delete(particle);
+                    }
+                });
+            }
+
+            drawStatic() {
+                let i = 0;
+                const step = 0.01;
+
+                this.mask.forEach((subMask) => {
+                    subMask.s.forEach((pos) => {
+                        i++;
+
+                        this.engine.fillStyle = color(
+                            subMask.hsl,
+                            ((1 + Math.cos(pos.x * 5 * pos.y * 5 + this.tick / 10)) / 2) *
+                            this.opa *
+                            pos.t *
+                            0.5
+                        );
+                        this.engine.fillRect(
+                            pos.x * this.width,
+                            pos.y * this.height,
+                            this.width / 150,
+                            this.width / 150
+                        );
+
+                        if (i % 2) {
+                            return;
+                        }
+
+                        pos.o += step;
+                        const opa = Math.max(0, Math.sin(pos.o * Math.PI * 2));
+                        const padding = (opa * this.width) / 200;
+
+                        this.engine.fillStyle = color(subMask.hsl, this.opa * opa * 0.2);
+
+                        if (pos.t < 0.5) {
+                            this.engine.beginPath();
+                            this.engine.arc(
+                                pos.x * this.width,
+                                pos.y * this.height,
+                                this.width / 500 + padding,
+                                0,
+                                Math.PI * 2
+                            );
+                            this.engine.fill();
+                        } else {
+                            this.engine.fillRect(
+                                pos.x * this.width - padding,
+                                pos.y * this.height - padding,
+                                this.width / 150 + padding * 2,
+                                this.width / 150 + padding * 2
+                            );
+                        }
+                    });
+                });
+            }
+
+            draw() {
+                this.tick++;
+
+                this.nextMaskCb();
+                this.createNewParticle();
+                this.clear();
+                this.engine.globalCompositeOperation = "lighter";
+                this.drawStatic();
+                this.renderParticles();
+                this.engine.globalCompositeOperation = "source-over";
+
+                requestAnimationFrame(this.drawCB);
+            }
+
+            fadeInMask() {
+                this.opa += this.stack[this.stackId].fadeIn;
+
+                if (this.opa >= 1) {
+                    this.opa = 1;
+
+                    this.afterFadeIn();
+                }
+            }
+
+            afterFadeIn() {
+                this.opa = 1;
+
+                if (this.stack[this.stackId].ticks) {
+                    this.maskTick = 0;
+                    this.nextMaskCb = this.tickMask.bind(this);
+                } else {
+                    this.nextMaskCb = () => { };
+                }
+            }
+
+            fadeOutMask() {
+                this.opa -= this.stack[this.stackId].fadeOut;
+
+                if (this.opa <= 0) {
+                    this.afterFadeOut();
+                }
+            }
+
+            afterFadeOut() {
+                this.opa = 0;
+                this.nextMaskCb = this.nextMask.bind(this);
+            }
+
+            tickMask() {
+                this.maskTick++;
+
+                if (this.maskTick >= this.stack[this.stackId].ticks) {
+                    if (this.stack[this.stackId].fadeOut) {
+                        this.nextMaskCb = this.fadeOutMask.bind(this);
+                    } else {
+                        this.afterFadeOut();
+                    }
+                }
+            }
+
+            nextMask() {
+                this.stackId++;
+
+                if (this.stackId >= this.stack.length) {
+                    // this.stackId = 0;
+                    console.log("结束");
+                    // setTimeout(function () {
+                    location.href = "album.html";
+                    // }, 1000);
+                    return;
+                }
+
+                this.mask = this.maskCache[this.stackId];
+
+                if (this.stack[this.stackId].fadeIn) {
+                    this.nextMaskCb = this.fadeInMask.bind(this);
+                } else {
+                    this.opa = 1;
+                    this.afterFadeIn();
+                }
+            }
+
+            run() {
+                this.drawCB = this.draw.bind(this);
+                this.drawCB();
+            }
+        }
+
+        const textSparks = new TextSparks();
+        textSparks.run();
+    </script>
+    <!-- 玫瑰区域 -->
+    <script>  
+        var c = document.getElementById('roses');
+        setTimeout(function () {
+            c.remove();
+        }, 25000)
+        var b = document.body;
+        var a = c.getContext('2d');
+        document.body.clientWidth;
+        with (m = Math) C = cos, S = sin, P = pow, R = random; c.width = c.height = f = 600; h = -250; function p(a, b, c) { if (c > 60) return [S(a * 7) * (13 + 5 / (.2 + P(b * 4, 4))) - S(b) * 50, b * f + 50, 625 + C(a * 7) * (13 + 5 / (.2 + P(b * 4, 4))) + b * 400, a * 1 - b / 2, a]; A = a * 2 - 1; B = b * 2 - 1; if (A * A + B * B < 1) { if (c > 37) { n = (j = c & 1) ? 6 : 4; o = .5 / (a + .01) + C(b * 125) * 3 - a * 300; w = b * h; return [o * C(n) + w * S(n) + j * 610 - 390, o * S(n) - w * C(n) + 550 - j * 350, 1180 + C(B + A) * 99 - j * 300, .4 - a * .1 + P(1 - B * B, -h * 6) * .15 - a * b * .4 + C(a + b) / 5 + P(C((o * (a + 1) + (B > 0 ? w : -w)) / 25), 30) * .1 * (1 - B * B), o / 1e3 + .7 - o * w * 3e-6] } if (c > 32) { c = c * 1.16 - .15; o = a * 45 - 20; w = b * b * h; z = o * S(c) + w * C(c) + 620; return [o * C(c) - w * S(c), 28 + C(B * .5) * 99 - b * b * b * 60 - z / 2 - h, z, (b * b * .3 + P((1 - (A * A)), 7) * .15 + .3) * b, b * .7] } o = A * (2 - b) * (80 - c * 2); w = 99 - C(A) * 120 - C(b) * (-h - c * 4.9) + C(P(1 - b, 7)) * 50 + c * 2; z = o * S(c) + w * C(c) + 700; return [o * C(c) - w * S(c), B * 99 - C(P(b, 7)) * 50 - c / 3 - z / 1.35 + 450, z, (1 - b / 1.2) * .9 + a * .1, P((1 - b), 20) / 4 + .05] } } setInterval('for(i=0;i<1e4;i++)if(s=p(R(),R(),i%46/.74)){z=s[2];x=~~(s[0]*f/z-h);y=~~(s[1]*f/z-h);if(!m[q=y*f+x]|m[q]>z)m[q]=z,a.fillStyle="rgb("+~(s[3]*h)+","+~(s[4]*h)+","+~(s[3]*s[3]*-80)+")",a.fillRect(x,y,1,1)}', 0)
+    </script> 
+</body>
+
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Document</title>
+	<script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: 100% 100%;
+			position: absolute;
+			overflow: hidden;
+			background-color: #000;
+			margin: 0;
+		}
+
+		#myCan {
+			width: 100%;
+			height: 100%;
+		}
+
+		li {
+			list-style: none;
+		}
+
+		.box {
+			width: 200px;
+			height: 200px;
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: 100% 100%;
+			position: absolute;
+			top: 30%;
+			left: 25%;
+			-webkit-transform-style: preserve-3d;
+			-webkit-transform: rotateX(13deg);
+			-webkit-animation: identifier 15s linear infinite;
+		}
+
+		.minbox {
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			left: 50px;
+			top: 30px;
+			-webkit-transform-style: preserve-3d;
+		}
+
+		.minbox li {
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			background-size: 100% 100% !important;
+		}
+
+		.minbox li:nth-child(1) {
+			background: url(http://photocq.photo.store.qq.com/psc?/V14DfRbH2v43gL/3RrONyX0CEAKVHJartz0VEdnrj1rZzXBM3wrYgpTD*BbFi9Ot1QQNsTJhVC1Tzv2LfTRCNZQRuAl6ge42l6QgUsXAATM27Je2ggBfBPHAyc!/b&bo=IAMqBAAAAAARFy0!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: translateZ(50px);
+		}
+
+		.minbox li:nth-child(2) {
+			background: url(http://photocq.photo.store.qq.com/psc?/V14DfRbH2v43gL/3RrONyX0CEAKVHJartz0VEdnrj1rZzXBM3wrYgpTD*BbFi9Ot1QQNsTJhVC1Tzv2LfTRCNZQRuAl6ge42l6QgUsXAATM27Je2ggBfBPHAyc!/b&bo=IAMqBAAAAAARFy0!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateX(180deg) translateZ(50px);
+		}
+
+		.minbox li:nth-child(3) {
+			background: url(http://photocq.photo.store.qq.com/psc?/V14DfRbH2v43gL/3RrONyX0CEAKVHJartz0VEdnrj1rZzXBM3wrYgpTD*BbFi9Ot1QQNsTJhVC1Tzv2LfTRCNZQRuAl6ge42l6QgUsXAATM27Je2ggBfBPHAyc!/b&bo=IAMqBAAAAAARFy0!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateX(-90deg) translateZ(50px);
+		}
+
+		.minbox li:nth-child(4) {
+			background: url(http://photocq.photo.store.qq.com/psc?/V14DfRbH2v43gL/3RrONyX0CEAKVHJartz0VEdnrj1rZzXBM3wrYgpTD*BbFi9Ot1QQNsTJhVC1Tzv2LfTRCNZQRuAl6ge42l6QgUsXAATM27Je2ggBfBPHAyc!/b&bo=IAMqBAAAAAARFy0!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateX(90deg) translateZ(50px);
+		}
+
+		.minbox li:nth-child(5) {
+			background: url(http://photocq.photo.store.qq.com/psc?/V14DfRbH2v43gL/3RrONyX0CEAKVHJartz0VEdnrj1rZzXBM3wrYgpTD*BbFi9Ot1QQNsTJhVC1Tzv2LfTRCNZQRuAl6ge42l6QgUsXAATM27Je2ggBfBPHAyc!/b&bo=IAMqBAAAAAARFy0!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateY(-90deg) translateZ(50px);
+		}
+
+		.minbox li:nth-child(6) {
+			background: url(http://photocq.photo.store.qq.com/psc?/V14DfRbH2v43gL/3RrONyX0CEAKVHJartz0VEdnrj1rZzXBM3wrYgpTD*BbFi9Ot1QQNsTJhVC1Tzv2LfTRCNZQRuAl6ge42l6QgUsXAATM27Je2ggBfBPHAyc!/b&bo=IAMqBAAAAAARFy0!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateY(90deg) translateZ(50px);
+		}
+
+		.maxbox li:nth-child(1) {
+			background: url(http://m.qpic.cn/psc?/V14DfRbH2v43gL/TmEUgtj9EK6.7V8ajmQrEG2CbzXcdDxJ.RaC.QQY*iS42xQLFg9k79RkKrU1.sMk3UsD9mOl7RVuBtuLDPBoCDjYNr0YoH8J459Fe5gXJOo!/b&bo=xAJKAgAAAAABF74!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: translateZ(50px);
+		}
+
+		.maxbox li:nth-child(2) {
+			background: url(http://m.qpic.cn/psc?/V14DfRbH2v43gL/TmEUgtj9EK6.7V8ajmQrEG2CbzXcdDxJ.RaC.QQY*iS42xQLFg9k79RkKrU1.sMk3UsD9mOl7RVuBtuLDPBoCDjYNr0YoH8J459Fe5gXJOo!/b&bo=xAJKAgAAAAABF74!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: translateZ(50px);
+		}
+
+		.maxbox li:nth-child(3) {
+			background: url(http://m.qpic.cn/psc?/V14DfRbH2v43gL/TmEUgtj9EK6.7V8ajmQrEG2CbzXcdDxJ.RaC.QQY*iS42xQLFg9k79RkKrU1.sMk3UsD9mOl7RVuBtuLDPBoCDjYNr0YoH8J459Fe5gXJOo!/b&bo=xAJKAgAAAAABF74!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateX(-90deg) translateZ(50px);
+		}
+
+		.maxbox li:nth-child(4) {
+			background: url(http://m.qpic.cn/psc?/V14DfRbH2v43gL/TmEUgtj9EK6.7V8ajmQrEG2CbzXcdDxJ.RaC.QQY*iS42xQLFg9k79RkKrU1.sMk3UsD9mOl7RVuBtuLDPBoCDjYNr0YoH8J459Fe5gXJOo!/b&bo=xAJKAgAAAAABF74!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateX(90deg) translateZ(50px);
+		}
+
+		.maxbox li:nth-child(5) {
+			background: url(http://m.qpic.cn/psc?/V14DfRbH2v43gL/TmEUgtj9EK6.7V8ajmQrEG2CbzXcdDxJ.RaC.QQY*iS42xQLFg9k79RkKrU1.sMk3UsD9mOl7RVuBtuLDPBoCDjYNr0YoH8J459Fe5gXJOo!/b&bo=xAJKAgAAAAABF74!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateY(-90deg) translateZ(50px);
+		}
+
+		.maxbox li:nth-child(6) {
+			background: url(http://m.qpic.cn/psc?/V14DfRbH2v43gL/TmEUgtj9EK6.7V8ajmQrEG2CbzXcdDxJ.RaC.QQY*iS42xQLFg9k79RkKrU1.sMk3UsD9mOl7RVuBtuLDPBoCDjYNr0YoH8J459Fe5gXJOo!/b&bo=xAJKAgAAAAABF74!&rf=viewer_4) no-repeat 0 0;
+			-webkit-transform: rotateY(90deg) translateZ(50px);
+		}
+
+		.maxbox {
+			width: 200px;
+			height: 200px;
+			position: absolute;
+			left: 0;
+			top: -20px;
+			-webkit-transform-style: preserve-3d;
+		}
+
+		.maxbox li {
+			width: 200px;
+			height: 200px;
+			background: #fff;
+			background-size: 100% 100% !important;
+			border: 1px solid #ccc;
+			position: absolute;
+			left: 0;
+			top: 0;
+			opacity: 0.5;
+			-webkit-transition: all 1s ease;
+		}
+
+		.maxbox li:nth-child(1) {
+			-webkit-transform: translateZ(100px);
+		}
+
+		.maxbox li:nth-child(2) {
+			-webkit-transform: rotateX(180deg) translateZ(100px);
+		}
+
+		.maxbox li:nth-child(3) {
+			-webkit-transform: rotateX(-90deg) translateZ(100px);
+		}
+
+		.maxbox li:nth-child(4) {
+			-webkit-transform: rotateX(90deg) translateZ(100px);
+		}
+
+		.maxbox li:nth-child(5) {
+			-webkit-transform: rotateY(-90deg) translateZ(100px);
+		}
+
+		.maxbox li:nth-child(6) {
+			-webkit-transform: rotateY(90deg) translateZ(100px);
+		}
+
+		.box:hover ol li:nth-child(1) {
+			-webkit-transform: translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box:hover ol li:nth-child(2) {
+			-webkit-transform: rotateX(180deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box:hover ol li:nth-child(3) {
+			-webkit-transform: rotateX(-90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box:hover ol li:nth-child(4) {
+			-webkit-transform: rotateX(90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box:hover ol li:nth-child(5) {
+			-webkit-transform: rotateY(-90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box:hover ol li:nth-child(6) {
+			-webkit-transform: rotateY(90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box.active ol li:nth-child(1) {
+			-webkit-transform: translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box.active ol li:nth-child(2) {
+			-webkit-transform: rotateX(180deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box.active ol li:nth-child(3) {
+			-webkit-transform: rotateX(-90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box.active ol li:nth-child(4) {
+			-webkit-transform: rotateX(90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box.active ol li:nth-child(5) {
+			-webkit-transform: rotateY(-90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		.box.active ol li:nth-child(6) {
+			-webkit-transform: rotateY(90deg) translateZ(200px);
+			width: 200px;
+			height: 200px;
+			opacity: 0.8;
+		}
+
+		@keyframes identifier {
+			0% {
+				transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+			}
+
+			100% {
+				transform: rotateX(360deg) rotateY(360deg) rotateZ(720deg);
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="box">
+		<ul class="minbox">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+		<ol class="maxbox">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ol>
+	</div>
+	<audio id="bgMusic"
+		src="https://aqqmusic.tc.qq.com/amobile.music.tc.qq.com/C40000008tK63ZjXt8.m4a?guid=703417739&vkey=DDB495382B55835896FC91F5A69F7FDCB9FC485DD60FB4DF33705CEE6FE67A3DD350974533575AA714AF35C6CD78886C7C87D6BB44082DD0&uin=&fromtag=66"
+		autoplay="autoplay" loop></audio>
+	<canvas id="myCan" width="961" height="880"></canvas>
+	<script>
+		var html = document.getElementsByTagName('html')[0]
+		var bgMusic = document.getElementById('bgMusic')
+		html.addEventListener('touchstart', function () {
+			bgMusic.play()
+		})
+		function toggleSound() {
+			if (bgMusic.paused) {
+				//判读是否播放
+				bgMusic.paused = false
+				bgMusic.play() //没有就播放
+			}
+		}
+		setInterval('toggleSound()', 1)
+
+		const box = document.getElementsByClassName('box')[0]
+		let index = 0
+		setInterval(() => {
+			index++
+			if (index === 2) {
+				index = 0
+			}
+			if (index === 0) {
+				box.className = 'box'
+			}
+			if (index === 1) {
+				box.className = 'box active'
+			}
+		}, 5000)
+	</script>
+	<script>
+		var RENDERER = {
+			INIT_CHERRY_BLOSSOM_COUNT: 30,
+			MAX_ADDING_INTERVAL: 10,
+
+			init: function () {
+				this.setParameters();
+				this.reconstructMethods();
+				this.createCherries();
+				this.render();
+				if (
+					navigator.userAgent.match(
+						/(phone|pod|iPhone|iPod|ios|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+					)
+				) {
+					var box = document.querySelectorAll('.box')[0];
+					// box.style.marginTop = '65%';
+				}
+			},
+			setParameters: function () {
+				this.$container = $('body');
+				this.width = this.$container.width();
+				this.height = this.$container.height();
+				this.context = $('#myCan').attr({ width: this.width, height: this.height })
+					.appendTo(this.$container)
+					.get(0)
+					.getContext('2d');
+				this.cherries = [];
+				this.maxAddingInterval = Math.round(
+					(this.MAX_ADDING_INTERVAL * 1000) / this.width
+				);
+				this.addingInterval = this.maxAddingInterval;
+			},
+			reconstructMethods: function () {
+				this.render = this.render.bind(this);
+			},
+			createCherries: function () {
+				for (
+					var i = 0,
+					length = Math.round(
+						(this.INIT_CHERRY_BLOSSOM_COUNT * this.width) / 1000
+					);
+					i < length;
+					i++
+				) {
+					this.cherries.push(new CHERRY_BLOSSOM(this, true));
+				}
+			},
+			render: function () {
+				requestAnimationFrame(this.render);
+				this.context.clearRect(0, 0, this.width, this.height);
+
+				this.cherries.sort(function (cherry1, cherry2) {
+					return cherry1.z - cherry2.z;
+				});
+				for (var i = this.cherries.length - 1; i >= 0; i--) {
+					if (!this.cherries[i].render(this.context)) {
+						this.cherries.splice(i, 1);
+					}
+				}
+				if (--this.addingInterval == 0) {
+					this.addingInterval = this.maxAddingInterval;
+					this.cherries.push(new CHERRY_BLOSSOM(this, false));
+				}
+			}
+		};
+		var CHERRY_BLOSSOM = function (renderer, isRandom) {
+			this.renderer = renderer;
+			this.init(isRandom);
+		};
+		CHERRY_BLOSSOM.prototype = {
+			FOCUS_POSITION: 300,
+			FAR_LIMIT: 600,
+			MAX_RIPPLE_COUNT: 100,
+			RIPPLE_RADIUS: 100,
+			SURFACE_RATE: 0.5,
+			SINK_OFFSET: 20,
+
+			init: function (isRandom) {
+				this.x = this.getRandomValue(
+					-this.renderer.width,
+					this.renderer.width
+				);
+				this.y = isRandom
+					? this.getRandomValue(0, this.renderer.height)
+					: this.renderer.height * 1.5;
+				this.z = this.getRandomValue(0, this.FAR_LIMIT);
+				this.vx = this.getRandomValue(-2, 2);
+				this.vy = -2;
+				this.theta = this.getRandomValue(0, Math.PI * 2);
+				this.phi = this.getRandomValue(0, Math.PI * 2);
+				this.psi = 0;
+				this.dpsi = this.getRandomValue(Math.PI / 600, Math.PI / 300);
+				this.opacity = 0;
+				this.endTheta = false;
+				this.endPhi = false;
+				this.rippleCount = 0;
+
+				var axis = this.getAxis(),
+					theta =
+						this.theta +
+						(Math.ceil(
+							-(this.y + this.renderer.height * this.SURFACE_RATE) / this.vy
+						) *
+							Math.PI) /
+						500;
+				theta %= Math.PI * 2;
+
+				this.offsetY =
+					40 * (theta <= Math.PI / 2 || theta >= (Math.PI * 3) / 2 ? -1 : 1);
+				this.thresholdY =
+					this.renderer.height / 2 +
+					this.renderer.height * this.SURFACE_RATE * axis.rate;
+				this.entityColor = this.renderer.context.createRadialGradient(
+					0,
+					40,
+					0,
+					0,
+					40,
+					80
+				);
+				this.entityColor.addColorStop(
+					0,
+					'hsl(330, 70%, ' + 50 * (0.3 + axis.rate) + '%)'
+				);
+				this.entityColor.addColorStop(
+					0.05,
+					'hsl(330, 40%,' + 55 * (0.3 + axis.rate) + '%)'
+				);
+				this.entityColor.addColorStop(
+					1,
+					'hsl(330, 20%, ' + 70 * (0.3 + axis.rate) + '%)'
+				);
+				this.shadowColor = this.renderer.context.createRadialGradient(
+					0,
+					40,
+					0,
+					0,
+					40,
+					80
+				);
+				this.shadowColor.addColorStop(
+					0,
+					'hsl(330, 40%, ' + 30 * (0.3 + axis.rate) + '%)'
+				);
+				this.shadowColor.addColorStop(
+					0.05,
+					'hsl(330, 40%,' + 30 * (0.3 + axis.rate) + '%)'
+				);
+				this.shadowColor.addColorStop(
+					1,
+					'hsl(330, 20%, ' + 40 * (0.3 + axis.rate) + '%)'
+				);
+			},
+			getRandomValue: function (min, max) {
+				return min + (max - min) * Math.random();
+			},
+			getAxis: function () {
+				var rate = this.FOCUS_POSITION / (this.z + this.FOCUS_POSITION),
+					x = this.renderer.width / 2 + this.x * rate,
+					y = this.renderer.height / 2 - this.y * rate;
+				return { rate: rate, x: x, y: y };
+			},
+			renderCherry: function (context, axis) {
+				context.beginPath();
+				context.moveTo(0, 40);
+				context.bezierCurveTo(-60, 20, -10, -60, 0, -20);
+				context.bezierCurveTo(10, -60, 60, 20, 0, 40);
+				context.fill();
+
+				for (var i = -4; i < 4; i++) {
+					context.beginPath();
+					context.moveTo(0, 40);
+					context.quadraticCurveTo(i * 12, 10, i * 4, -24 + Math.abs(i) * 2);
+					context.stroke();
+				}
+			},
+			render: function (context) {
+				var axis = this.getAxis();
+
+				if (
+					axis.y == this.thresholdY &&
+					this.rippleCount < this.MAX_RIPPLE_COUNT
+				) {
+					context.save();
+					context.lineWidth = 2;
+					context.strokeStyle =
+						'hsla(0, 0%, 100%, ' +
+						(this.MAX_RIPPLE_COUNT - this.rippleCount) /
+						this.MAX_RIPPLE_COUNT +
+						')';
+					context.translate(
+						axis.x +
+						this.offsetY * axis.rate * (this.theta <= Math.PI ? -1 : 1),
+						axis.y
+					);
+					context.scale(1, 0.3);
+					context.beginPath();
+					context.arc(
+						0,
+						0,
+						(this.rippleCount / this.MAX_RIPPLE_COUNT) *
+						this.RIPPLE_RADIUS *
+						axis.rate,
+						0,
+						Math.PI * 2,
+						false
+					);
+					context.stroke();
+					context.restore();
+					this.rippleCount++;
+				}
+				if (axis.y < this.thresholdY || !this.endTheta || !this.endPhi) {
+					if (this.y <= 0) {
+						this.opacity = Math.min(this.opacity + 0.01, 1);
+					}
+					context.save();
+					context.globalAlpha = this.opacity;
+					context.fillStyle = this.shadowColor;
+					context.strokeStyle =
+						'hsl(330, 30%,' + 40 * (0.3 + axis.rate) + '%)';
+					context.translate(
+						axis.x,
+						Math.max(axis.y, this.thresholdY + this.thresholdY - axis.y)
+					);
+					context.rotate(Math.PI - this.theta);
+					context.scale(axis.rate * -Math.sin(this.phi), axis.rate);
+					context.translate(0, this.offsetY);
+					this.renderCherry(context, axis);
+					context.restore();
+				}
+				context.save();
+				context.fillStyle = this.entityColor;
+				context.strokeStyle = 'hsl(330, 40%,' + 70 * (0.3 + axis.rate) + '%)';
+				context.translate(
+					axis.x,
+					axis.y + Math.abs(this.SINK_OFFSET * Math.sin(this.psi) * axis.rate)
+				);
+				context.rotate(this.theta);
+				context.scale(axis.rate * Math.sin(this.phi), axis.rate);
+				context.translate(0, this.offsetY);
+				this.renderCherry(context, axis);
+				context.restore();
+
+				if (this.y <= -this.renderer.height / 4) {
+					if (!this.endTheta) {
+						for (
+							var theta = Math.PI / 2, end = (Math.PI * 3) / 2;
+							theta <= end;
+							theta += Math.PI
+						) {
+							if (this.theta < theta && this.theta + Math.PI / 200 > theta) {
+								this.theta = theta;
+								this.endTheta = true;
+								break;
+							}
+						}
+					}
+					if (!this.endPhi) {
+						for (
+							var phi = Math.PI / 8, end = (Math.PI * 7) / 8;
+							phi <= end;
+							phi += (Math.PI * 3) / 4
+						) {
+							if (this.phi < phi && this.phi + Math.PI / 200 > phi) {
+								this.phi = Math.PI / 8;
+								this.endPhi = true;
+								break;
+							}
+						}
+					}
+				}
+				if (!this.endTheta) {
+					if (axis.y == this.thresholdY) {
+						this.theta +=
+							(Math.PI / 200) *
+							(this.theta < Math.PI / 2 ||
+								(this.theta >= Math.PI && this.theta < (Math.PI * 3) / 2)
+								? 1
+								: -1);
+					} else {
+						this.theta += Math.PI / 500;
+					}
+					this.theta %= Math.PI * 2;
+				}
+				if (this.endPhi) {
+					if (this.rippleCount == this.MAX_RIPPLE_COUNT) {
+						this.psi += this.dpsi;
+						this.psi %= Math.PI * 2;
+					}
+				} else {
+					this.phi += Math.PI / (axis.y == this.thresholdY ? 200 : 500);
+					this.phi %= Math.PI;
+				}
+				if (this.y <= -this.renderer.height * this.SURFACE_RATE) {
+					this.x += 2;
+					this.y = -this.renderer.height * this.SURFACE_RATE;
+				} else {
+					this.x += this.vx;
+					this.y += this.vy;
+				}
+				return (
+					this.z > -this.FOCUS_POSITION &&
+					this.z < this.FAR_LIMIT &&
+					this.x < this.renderer.width * 1.5
+				);
+			}
+		};
+		$(function () {
+			RENDERER.init();
+		});
+	</script>
+</body>
+
+</html>
