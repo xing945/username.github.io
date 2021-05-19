@@ -42,7 +42,7 @@
             position: absolute;
             left: 50px;
             right: 0;
-            top: 0;
+            top: -250px;
             bottom: 0;
             margin: auto;
             width: 900px;
@@ -455,7 +455,6 @@
                     // this.stackId = 0;
                     console.log("结束");
                     // setTimeout(function () {
-                    location.href = "album.html";
                     // }, 1000);
                     return;
                 }
@@ -484,6 +483,7 @@
         var c = document.getElementById('roses');
         setTimeout(function () {
             c.remove();
+            // location.href = "album.html";
         }, 25000)
         var b = document.body;
         var a = c.getContext('2d');
